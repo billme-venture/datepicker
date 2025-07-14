@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@billme/datepicker Simple Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .example {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 { color: #495057; }
+        p { color: #6c757d; }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .highlight { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>@billme/datepicker Examples</h1>
+            <p>Here are different ways to run and use the datepicker examples:</p>
+        </header>
+
+        <div class="example">
+            <h2>🚀 Option 1: Development Server (Recommended)</h2>
+            <p>The best way to see all examples with hot reload:</p>
+            <div class="code">cd /Users/bigdevs/Workspaces/billme/datepicker/examples
+npm install
+npm run dev</div>
+            <p>Then open <span class="highlight">http://localhost:3000</span> in your browser.</p>
+        </div>
+
+        <div class="example">
+            <h2>📦 Option 2: Using the Built Library</h2>
+            <p>If you want to use the datepicker in your own project:</p>
+            <div class="code">cd /Users/bigdevs/Workspaces/billme/datepicker
+npm run build</div>
+            <p>Then in your React project:</p>
+            <div class="code">import { useDatePicker } from '/path/to/datepicker/dist'
+
+function MyComponent() {
+  const datePicker = useDatePicker({ mode: 'single' });
+  
+  return (
+    &lt;div&gt;
+      &lt;button onClick={datePicker.toggle}&gt;
+        {datePicker.selectedDate 
+          ? datePicker.formatDate(datePicker.selectedDate)
+          : 'Select Date'
+        }
+      &lt;/button&gt;
+      {/* Add your calendar UI here */}
+    &lt;/div&gt;
+  );
+}</div>
+        </div>
+
+        <div class="example">
+            <h2>🧪 Option 3: Run Tests</h2>
+            <p>To run the test suite and see all functionality:</p>
+            <div class="code">cd /Users/bigdevs/Workspaces/billme/datepicker
+npm test</div>
+        </div>
+
+        <div class="example">
+            <h2>📖 Basic Usage Example</h2>
+            <p>Here's a minimal example of how to use the headless datepicker:</p>
+            <div class="code">import React from 'react';
+import { useDatePicker } from '@billme/datepicker';
+
+function SimpleDatePicker() {
+  const datePicker = useDatePicker({
+    mode: 'single',
+    minDate: new Date(), // No past dates
+  });
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={datePicker.toggle}&gt;
+        {datePicker.selectedDate 
+          ? datePicker.formatDate(datePicker.selectedDate, 'MMM d, yyyy')
+          : 'Select a date'
+        }
+      &lt;/button&gt;
+      
+      {datePicker.isOpen && (
+        &lt;div className="calendar"&gt;
+          {/* Header */}
+          &lt;div&gt;
+            &lt;button onClick={datePicker.goToPreviousMonth}&gt;←&lt;/button&gt;
+            &lt;h3&gt;{datePicker.currentMonth + 1}/{datePicker.currentYear}&lt;/h3&gt;
+            &lt;button onClick={datePicker.goToNextMonth}&gt;→&lt;/button&gt;
+          &lt;/div&gt;
+          
+          {/* Calendar grid */}
+          &lt;div className="calendar-grid"&gt;
+            {datePicker.calendar.weeks.map((week, weekIndex) =&gt;
+              week.days.map((day, dayIndex) =&gt; (
+                &lt;button
+                  key={`${weekIndex}-${dayIndex}`}
+                  onClick={() =&gt; datePicker.selectDate(day.date)}
+                  disabled={day.isDisabled}
+                  className={`
+                    ${day.isSelected ? 'selected' : ''}
+                    ${day.isToday ? 'today' : ''}
+                  `}
+                &gt;
+                  {day.date.getDate()}
+                &lt;/button&gt;
+              ))
+            )}
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+}</div>
+        </div>
+
+        <div class="example">
+            <h2>🎨 Available Examples</h2>
+            <p>The examples include:</p>
+            <ul>
+                <li><strong>Simple Calendar</strong> - Basic single date selection</li>
+                <li><strong>Range Picker</strong> - Select date ranges with hover effects</li>
+                <li><strong>Multi-select Calendar</strong> - Select multiple dates with limits</li>
+                <li><strong>Custom Implementation</strong> - Advanced styling and constraints</li>
+            </ul>
+            <p>Each example shows different aspects of the headless datepicker's capabilities.</p>
+        </div>
+
+        <div class="example">
+            <h2>🔧 Configuration Options</h2>
+            <p>The datepicker supports many configuration options:</p>
+            <div class="code">const datePicker = useDatePicker({
+  mode: 'single' | 'range' | 'multiple',
+  minDate: new Date(),
+  maxDate: new Date(2025, 11, 31),
+  disabledDates: [new Date(2024, 11, 25)], // Christmas
+  disabledDaysOfWeek: [0, 6], // Weekends
+  firstDayOfWeek: 1, // Monday
+  selectedDate: new Date(), // Initial date
+});</div>
+        </div>
+
+        <footer style="margin-top: 40px; text-align: center; color: #6c757d;">
+            <p>Built with ❤️ by the billme team</p>
+        </footer>
+    </div>
+</body>
+</html>

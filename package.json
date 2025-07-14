@@ -1,0 +1,74 @@
+{
+  "name": "@billme-venture/headless-datepicker",
+  "version": "1.0.0",
+  "description": "A beautiful headless datepicker for React from billme team",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build",
+    "examples": "cd examples && npm install && npm run dev",
+    "examples:install": "cd examples && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/billme-venture/datepicker.git"
+  },
+  "keywords": [
+    "datepicker",
+    "react",
+    "headless",
+    "typescript",
+    "calendar"
+  ],
+  "author": "Anucha Petchagun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/billme-venture/datepicker/issues"
+  },
+  "homepage": "https://github.com/billme-venture/datepicker#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^4.12.0",
+    "rollup-plugin-dts": "^6.1.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "date-fns": "^3.3.1"
+  }
+}
