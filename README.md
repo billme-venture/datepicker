@@ -398,7 +398,7 @@ The datepicker is completely headless, so you have full control over styling. He
 This package includes complete example components:
 
 ```tsx
-import { SimpleCalendar, RangePicker, MultiSelectCalendar } from '@billme/datepicker';
+import { SimpleCalendar, RangePicker, MultiSelectCalendar } from '@billme-venture/headless-datepicker';
 
 // Pre-built components with styling
 function App() {
@@ -417,7 +417,7 @@ function App() {
 The package is written in TypeScript and includes complete type definitions:
 
 ```typescript
-import { DatePickerReturn, CalendarDay, DateRange } from '@billme/datepicker';
+import { DatePickerReturn, CalendarDay, DateRange } from '@billme-venture/headless-datepicker';
 
 function MyComponent() {
   const datePicker: DatePickerReturn = useDatePicker();

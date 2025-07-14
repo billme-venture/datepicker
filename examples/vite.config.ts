@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@billme/datepicker': resolve(__dirname, '../src/index.ts'),
+      '@billme-venture/headless-datepicker': resolve(__dirname, '../src/index.ts'),
     },
   },
   server: {

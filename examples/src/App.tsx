@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDatePicker, SimpleCalendar, RangePicker, MultiSelectCalendar, TimePicker } from '@billme/datepicker';
+import { useDatePicker, SimpleCalendar, RangePicker, MultiSelectCalendar, TimePicker } from '@billme-venture/headless-datepicker';
 
 function App() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -16,7 +16,7 @@ function App() {
       minHeight: '100vh'
     }}>
       <header style={{ marginBottom: '40px', textAlign: 'center' }}>
-        <h1 style={{ color: '#333', marginBottom: '8px' }}>@billme/datepicker</h1>
+        <h1 style={{ color: '#333', marginBottom: '8px' }}>@billme-venture/headless-datepicker</h1>
         <p style={{ color: '#666', fontSize: '18px' }}>Headless React Datepicker Examples</p>
       </header>
       

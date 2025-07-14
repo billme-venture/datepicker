@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-07-14
 
 ### Added
-- Initial release of @billme/datepicker
+- Initial release of @billme-venture/headless-datepicker
 - Headless datepicker hook (`useDatePicker`) with full TypeScript support
 - Three selection modes: single date, date range, and multiple dates
 - Comprehensive date utilities and helper functions

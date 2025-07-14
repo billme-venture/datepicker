@@ -14,7 +14,7 @@ function Demo() {
       maxWidth: '1200px',
       margin: '0 auto'
     }}>
-      <h1>@billme/datepicker Demo</h1>
+      <h1>@billme-venture/headless-datepicker Demo</h1>
       
       <div style={{ 
         display: 'grid', 
