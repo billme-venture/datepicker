@@ -46,9 +46,20 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   const getInitialState = (): DatePickerState => {
     const now = new Date();
     
+    // Determine the initial month/year based on selected date or current date
+    let initialDate = now;
+    
+    if (config.selectedDate) {
+      initialDate = config.selectedDate;
+    } else if (config.selectedRange?.start) {
+      initialDate = config.selectedRange.start;
+    } else if (config.selectedDates && config.selectedDates.length > 0) {
+      initialDate = config.selectedDates[0];
+    }
+    
     return {
-      currentMonth: now.getMonth(),
-      currentYear: now.getFullYear(),
+      currentMonth: initialDate.getMonth(),
+      currentYear: initialDate.getFullYear(),
       selectedDate: config.selectedDate || null,
       selectedDates: config.selectedDates || [],
       selectedRange: config.selectedRange || { start: null, end: null },

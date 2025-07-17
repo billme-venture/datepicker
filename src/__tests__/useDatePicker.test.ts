@@ -382,4 +382,54 @@ describe('useDatePicker', () => {
     expect(result.current.selectedDate?.getSeconds()).toBe(45);
     expect(result.current.isOpen).toBe(false);
   });
+
+  test('should initialize calendar to selectedDate month', () => {
+    const selectedDate = new Date(2023, 5, 15); // June 15, 2023
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'single',
+      selectedDate 
+    }));
+    
+    expect(result.current.selectedDate).toEqual(selectedDate);
+    expect(result.current.currentMonth).toBe(5); // June (0-indexed)
+    expect(result.current.currentYear).toBe(2023);
+  });
+
+  test('should initialize calendar to selectedRange start month', () => {
+    const startDate = new Date(2023, 2, 10); // March 10, 2023
+    const endDate = new Date(2023, 2, 20); // March 20, 2023
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'range',
+      selectedRange: { start: startDate, end: endDate }
+    }));
+    
+    expect(result.current.selectedRange.start).toEqual(startDate);
+    expect(result.current.selectedRange.end).toEqual(endDate);
+    expect(result.current.currentMonth).toBe(2); // March (0-indexed)
+    expect(result.current.currentYear).toBe(2023);
+  });
+
+  test('should initialize calendar to first selectedDates month', () => {
+    const dates = [
+      new Date(2023, 8, 5), // September 5, 2023
+      new Date(2023, 8, 15), // September 15, 2023
+    ];
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'multiple',
+      selectedDates: dates
+    }));
+    
+    expect(result.current.selectedDates).toEqual(dates);
+    expect(result.current.currentMonth).toBe(8); // September (0-indexed)
+    expect(result.current.currentYear).toBe(2023);
+  });
+
+  test('should initialize calendar to current month when no initial dates provided', () => {
+    const now = new Date();
+    const { result } = renderHook(() => useDatePicker({ mode: 'single' }));
+    
+    expect(result.current.selectedDate).toBe(null);
+    expect(result.current.currentMonth).toBe(now.getMonth());
+    expect(result.current.currentYear).toBe(now.getFullYear());
+  });
 });

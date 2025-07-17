@@ -1,6 +1,6 @@
 {
   "name": "@billme-venture/headless-datepicker",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A beautiful headless datepicker for React from billme team",
   "type": "module",
   "main": "dist/index.js",

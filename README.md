@@ -228,6 +228,32 @@ interface TimeConfig {
 }
 ```
 
+#### Calendar Initialization
+
+The calendar automatically initializes to show the month containing your pre-selected dates:
+
+- **With `selectedDate`**: Calendar opens to the month of the selected date
+- **With `selectedRange`**: Calendar opens to the month of the range start date
+- **With `selectedDates`**: Calendar opens to the month of the first selected date
+- **Without initial dates**: Calendar opens to the current month
+
+```tsx
+// Calendar will open to December 2023
+const datePicker = useDatePicker({
+  mode: 'single',
+  selectedDate: new Date(2023, 11, 25) // Christmas 2023
+});
+
+// Calendar will open to March 2024 (start date's month)
+const rangePicker = useDatePicker({
+  mode: 'range',
+  selectedRange: {
+    start: new Date(2024, 2, 15), // March 15, 2024
+    end: new Date(2024, 3, 10)    // April 10, 2024
+  }
+});
+```
+
 #### Return Value
 
 The hook returns an object with the following properties and methods:

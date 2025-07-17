@@ -122,6 +122,21 @@ function App() {
           </p>
           <DateTimePicker />
         </div>
+
+        {/* Pre-selected Date Picker */}
+        <div style={{ 
+          border: '1px solid #e9ecef', 
+          borderRadius: '12px', 
+          padding: '24px',
+          backgroundColor: 'white',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          <h2 style={{ marginTop: 0, color: '#495057' }}>Pre-selected Date</h2>
+          <p style={{ color: '#6c757d', fontSize: '14px' }}>
+            Calendar opens to the month of the pre-selected date (Christmas 2023)
+          </p>
+          <PreSelectedDatePicker />
+        </div>
       </div>
 
       {/* Custom implementation example */}
@@ -578,6 +593,232 @@ function CustomDatePicker() {
                 borderRadius: '6px',
                 backgroundColor: 'transparent',
                 color: '#dc3545',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}
+            >
+              Clear
+            </button>
+            <button
+              onClick={datePicker.goToToday}
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #28a745',
+                borderRadius: '6px',
+                backgroundColor: 'transparent',
+                color: '#28a745',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}
+            >
+              Today
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PreSelectedDatePicker() {
+  // Pre-select Christmas 2023 - calendar should open to December 2023
+  const christmasDate = new Date(2023, 11, 25); // December 25, 2023
+  
+  const datePicker = useDatePicker({
+    mode: 'single',
+    selectedDate: christmasDate, // This should make calendar open to December 2023
+  });
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  return (
+    <div>
+      <p style={{ marginBottom: '16px', fontSize: '14px', color: '#495057' }}>
+        Selected: {datePicker.selectedDate 
+          ? datePicker.formatDate(datePicker.selectedDate, 'EEEE, MMMM d, yyyy') 
+          : 'None'
+        }
+      </p>
+      <p style={{ marginBottom: '16px', fontSize: '12px', color: '#6c757d' }}>
+        Current view: {monthNames[datePicker.currentMonth]} {datePicker.currentYear}
+      </p>
+      
+      <button
+        onClick={datePicker.toggle}
+        style={{
+          padding: '12px 16px',
+          border: '2px solid #dc3545',
+          borderRadius: '8px',
+          backgroundColor: datePicker.isOpen ? '#dc3545' : 'white',
+          color: datePicker.isOpen ? 'white' : '#dc3545',
+          cursor: 'pointer',
+          marginBottom: '16px',
+          fontSize: '14px',
+          fontWeight: '500',
+          minWidth: '200px',
+          transition: 'all 0.2s ease'
+        }}
+      >
+        {datePicker.selectedDate 
+          ? datePicker.formatDate(datePicker.selectedDate, 'MMM d, yyyy')
+          : 'Select a date'
+        }
+      </button>
+
+      {datePicker.isOpen && (
+        <div style={{ 
+          border: '2px solid #e9ecef',
+          borderRadius: '12px',
+          backgroundColor: 'white',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+          padding: '20px',
+          marginTop: '8px',
+          width: 'fit-content'
+        }}>
+          {/* Header */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: '20px'
+          }}>
+            <button
+              onClick={datePicker.goToPreviousMonth}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                fontSize: '20px', 
+                cursor: 'pointer',
+                padding: '8px',
+                borderRadius: '6px',
+                color: '#6c757d'
+              }}
+            >
+              ←
+            </button>
+            <h3 style={{ margin: 0, color: '#495057', fontSize: '18px', fontWeight: '600' }}>
+              {monthNames[datePicker.currentMonth]} {datePicker.currentYear}
+            </h3>
+            <button
+              onClick={datePicker.goToNextMonth}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                fontSize: '20px', 
+                cursor: 'pointer',
+                padding: '8px',
+                borderRadius: '6px',
+                color: '#6c757d'
+              }}
+            >
+              →
+            </button>
+          </div>
+
+          {/* Day names */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(7, 1fr)', 
+            gap: '4px',
+            marginBottom: '12px'
+          }}>
+            {dayNames.map(day => (
+              <div 
+                key={day} 
+                style={{ 
+                  textAlign: 'center', 
+                  fontSize: '12px', 
+                  fontWeight: '600', 
+                  color: '#6c757d',
+                  padding: '8px'
+                }}
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar grid */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(7, 1fr)', 
+            gap: '4px',
+            marginBottom: '20px'
+          }}>
+            {datePicker.calendar.weeks.map((week: any, weekIndex: number) =>
+              week.days.map((day: any, dayIndex: number) => (
+                <button
+                  key={`${weekIndex}-${dayIndex}`}
+                  onClick={() => datePicker.selectDate(day.date)}
+                  disabled={day.isDisabled}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    cursor: day.isDisabled ? 'not-allowed' : 'pointer',
+                    backgroundColor: day.isSelected 
+                      ? '#dc3545' 
+                      : day.isToday 
+                        ? '#f8d7da' 
+                        : 'transparent',
+                    color: day.isSelected 
+                      ? 'white' 
+                      : day.isDisabled
+                        ? '#dee2e6'
+                        : day.isToday
+                          ? '#721c24'
+                          : day.isCurrentMonth 
+                            ? '#495057' 
+                            : '#adb5bd',
+                    opacity: day.isDisabled ? 0.5 : 1,
+                    transition: 'all 0.2s ease',
+                    fontWeight: day.isToday || day.isSelected ? '600' : '400'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!day.isDisabled) {
+                      e.currentTarget.style.backgroundColor = day.isSelected ? '#c82333' : '#f8f9fa';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!day.isDisabled) {
+                      e.currentTarget.style.backgroundColor = day.isSelected 
+                        ? '#dc3545' 
+                        : day.isToday 
+                          ? '#f8d7da' 
+                          : 'transparent';
+                    }
+                  }}
+                >
+                  {day.date.getDate()}
+                </button>
+              ))
+            )}
+          </div>
+
+          {/* Footer */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between',
+            paddingTop: '16px',
+            borderTop: '1px solid #e9ecef'
+          }}>
+            <button
+              onClick={datePicker.clearSelection}
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #6c757d',
+                borderRadius: '6px',
+                backgroundColor: 'transparent',
+                color: '#6c757d',
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: '500'
