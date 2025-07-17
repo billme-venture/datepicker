@@ -432,4 +432,107 @@ describe('useDatePicker', () => {
     expect(result.current.currentMonth).toBe(now.getMonth());
     expect(result.current.currentYear).toBe(now.getFullYear());
   });
+
+  test('should keep datepicker open when selecting date with time enabled', () => {
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'single',
+      time: { enableTime: true }
+    }));
+    
+    // Open the datepicker
+    act(() => {
+      result.current.setIsOpen(true);
+    });
+    
+    expect(result.current.isOpen).toBe(true);
+    
+    // Select a date - should keep datepicker open when time is enabled
+    const testDate = new Date(2024, 5, 15);
+    act(() => {
+      result.current.selectDate(testDate);
+    });
+    
+    expect(result.current.selectedDate).toEqual(testDate);
+    expect(result.current.isOpen).toBe(true); // Should remain open for time selection
+  });
+
+  test('should close datepicker when selecting date without time enabled', () => {
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'single',
+      time: { enableTime: false }
+    }));
+    
+    // Open the datepicker
+    act(() => {
+      result.current.setIsOpen(true);
+    });
+    
+    expect(result.current.isOpen).toBe(true);
+    
+    // Select a date - should close datepicker when time is disabled
+    const testDate = new Date(2024, 5, 15);
+    act(() => {
+      result.current.selectDate(testDate);
+    });
+    
+    expect(result.current.selectedDate).toEqual(testDate);
+    expect(result.current.isOpen).toBe(false); // Should close immediately
+  });
+
+  test('should keep range datepicker open when time enabled and completing range', () => {
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'range',
+      time: { enableTime: true }
+    }));
+    
+    // Open the datepicker
+    act(() => {
+      result.current.setIsOpen(true);
+    });
+    
+    // Select start date
+    const startDate = new Date(2024, 5, 10);
+    act(() => {
+      result.current.selectDate(startDate);
+    });
+    
+    expect(result.current.isOpen).toBe(true); // Should remain open
+    
+    // Complete the range
+    const endDate = new Date(2024, 5, 20);
+    act(() => {
+      result.current.selectDate(endDate);
+    });
+    
+    expect(result.current.selectedRange.start).toEqual(startDate);
+    expect(result.current.selectedRange.end).toEqual(endDate);
+    expect(result.current.isOpen).toBe(true); // Should remain open for time selection
+  });
+
+  test('should close datepicker when using selectDateAndTime', () => {
+    const { result } = renderHook(() => useDatePicker({ 
+      mode: 'single',
+      time: { enableTime: true }
+    }));
+    
+    // Open the datepicker
+    act(() => {
+      result.current.setIsOpen(true);
+    });
+    
+    expect(result.current.isOpen).toBe(true);
+    
+    // Select date and time - should close datepicker
+    const testDate = new Date(2024, 5, 15);
+    act(() => {
+      result.current.selectDateAndTime(testDate, 14, 30);
+    });
+    
+    expect(result.current.selectedDate?.getFullYear()).toBe(2024);
+    expect(result.current.selectedDate?.getMonth()).toBe(5);
+    expect(result.current.selectedDate?.getDate()).toBe(15);
+    expect(result.current.selectedDate?.getHours()).toBe(14);
+    expect(result.current.selectedDate?.getMinutes()).toBe(30);
+    expect(result.current.isOpen).toBe(false); // Should close when both date and time are set
+  });
 });

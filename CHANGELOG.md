@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-07-17
+
+### Fixed
+- **Improved DateTime UX**: Datepicker now stays open when time is enabled after date selection
+  - In single mode: Datepicker remains open after selecting a date when `time.enableTime = true`
+  - In range mode: Datepicker remains open after completing a range when time is enabled
+  - Only closes when using `selectDateAndTime()` (both date and time selected)
+  - Normal behavior (auto-close) when time is disabled
+
+### Enhanced
+- Better user experience for datetime selection workflows
+- More logical interaction flow when both date and time selection are required
+
 ## [1.1.0] - 2025-07-17
 
 ### Added

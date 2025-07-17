@@ -187,7 +187,8 @@ export function useDatePicker(
             return {
               ...prev,
               selectedDate: date,
-              isOpen: !!config.time ? false : true,
+              // Keep datepicker open if time is enabled, close otherwise
+              isOpen: config.time?.enableTime ? true : false,
             };
           case "multiple":
             const isAlreadySelected = prev.selectedDates.some((d) =>
@@ -212,7 +213,8 @@ export function useDatePicker(
               return {
                 ...prev,
                 selectedRange: range,
-                isOpen: false,
+                // Keep datepicker open if time is enabled, close otherwise
+                isOpen: config.time?.enableTime ? true : false,
               };
             }
           default:
@@ -220,7 +222,7 @@ export function useDatePicker(
         }
       });
     },
-    [config.mode, checkIsDateDisabled]
+    [config.mode, config.time?.enableTime, checkIsDateDisabled]
   );
 
   const selectRange = useCallback(
@@ -403,6 +405,7 @@ export function useDatePicker(
             return {
               ...prev,
               selectedDate: finalDate,
+              // Close datepicker when both date and time are selected
               isOpen: false,
             };
           default:
