@@ -1,11 +1,11 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from "react";
 import {
   DatePickerConfig,
   DatePickerState,
   DatePickerReturn,
   SelectionMode,
   DateRange,
-} from './types';
+} from "./types";
 import {
   generateCalendarMonth,
   formatDate,
@@ -14,41 +14,43 @@ import {
   normalizeRange,
   getMonthBoundaries,
   combineDateAndTime,
-} from './utils';
-import { isSameDay, isWithinInterval } from 'date-fns';
+} from "./utils";
+import { isSameDay, isWithinInterval } from "date-fns";
 
 const defaultConfig: Partial<DatePickerConfig> = {
-  mode: 'single',
+  mode: "single",
   firstDayOfWeek: 0,
-  locale: 'en-US',
+  locale: "en-US",
   disabledDates: [],
   disabledDaysOfWeek: [],
   time: {
     enableTime: false,
-    timeFormat: '24h',
+    timeFormat: "24h",
     minuteStep: 1,
     showSeconds: false,
   },
 };
 
-export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DatePickerReturn {
+export function useDatePicker(
+  userConfig: Partial<DatePickerConfig> = {}
+): DatePickerReturn {
   // Check if React is available and we're in a React component context
-  if (typeof useState !== 'function') {
+  if (typeof useState !== "function") {
     throw new Error(
-      '@billme-venture/headless-datepicker: React hooks are not available. ' +
-      'Make sure you are calling useDatePicker inside a React component and that React is properly installed.'
+      "@billme-venture/headless-datepicker: React hooks are not available. " +
+        "Make sure you are calling useDatePicker inside a React component and that React is properly installed."
     );
   }
 
   const config = { ...defaultConfig, ...userConfig } as DatePickerConfig;
-  
+
   // Initialize state based on mode and provided values
   const getInitialState = (): DatePickerState => {
     const now = new Date();
-    
+
     // Determine the initial month/year based on selected date or current date
     let initialDate = now;
-    
+
     if (config.selectedDate) {
       initialDate = config.selectedDate;
     } else if (config.selectedRange?.start) {
@@ -56,7 +58,7 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
     } else if (config.selectedDates && config.selectedDates.length > 0) {
       initialDate = config.selectedDates[0];
     }
-    
+
     return {
       currentMonth: initialDate.getMonth(),
       currentYear: initialDate.getFullYear(),
@@ -81,25 +83,34 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
         config.disabledDaysOfWeek
       );
     },
-    [config.minDate, config.maxDate, config.disabledDates, config.disabledDaysOfWeek]
+    [
+      config.minDate,
+      config.maxDate,
+      config.disabledDates,
+      config.disabledDaysOfWeek,
+    ]
   );
 
   // Helper function to check if a date is selected
   const checkIsDateSelected = useCallback(
     (date: Date): boolean => {
       switch (config.mode) {
-        case 'single':
-          return state.selectedDate ? isSameDay(date, state.selectedDate) : false;
-        case 'multiple':
-          return state.selectedDates.some(d => isSameDay(date, d));
-        case 'range':
+        case "single":
+          return state.selectedDate
+            ? isSameDay(date, state.selectedDate)
+            : false;
+        case "multiple":
+          return state.selectedDates.some((d) => isSameDay(date, d));
+        case "range":
           if (state.selectedRange.start && state.selectedRange.end) {
             return isWithinInterval(date, {
               start: state.selectedRange.start,
-              end: state.selectedRange.end
+              end: state.selectedRange.end,
             });
           }
-          return state.selectedRange.start ? isSameDay(date, state.selectedRange.start) : false;
+          return state.selectedRange.start
+            ? isSameDay(date, state.selectedRange.start)
+            : false;
         default:
           return false;
       }
@@ -110,24 +121,27 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   // Helper function to check if a date is in range (for range mode)
   const checkIsDateInRange = useCallback(
     (date: Date): boolean => {
-      if (config.mode !== 'range') return false;
-      
+      if (config.mode !== "range") return false;
+
       if (state.selectedRange.start && state.selectedRange.end) {
         return isWithinInterval(date, {
           start: state.selectedRange.start,
-          end: state.selectedRange.end
+          end: state.selectedRange.end,
         });
       }
-      
+
       // Handle hover state
       if (state.selectedRange.start && state.hoveredDate) {
-        const tempRange = normalizeRange(state.selectedRange.start, state.hoveredDate);
+        const tempRange = normalizeRange(
+          state.selectedRange.start,
+          state.hoveredDate
+        );
         return isWithinInterval(date, {
           start: tempRange.start!,
-          end: tempRange.end!
+          end: tempRange.end!,
         });
       }
-      
+
       return false;
     },
     [config.mode, state.selectedRange, state.hoveredDate]
@@ -167,23 +181,25 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
     (date: Date) => {
       if (checkIsDateDisabled(date)) return;
 
-      setState(prev => {
+      setState((prev) => {
         switch (config.mode) {
-          case 'single':
+          case "single":
             return {
               ...prev,
               selectedDate: date,
-              isOpen: false,
+              isOpen: !!config.time ? false : true,
             };
-          case 'multiple':
-            const isAlreadySelected = prev.selectedDates.some(d => isSameDay(date, d));
+          case "multiple":
+            const isAlreadySelected = prev.selectedDates.some((d) =>
+              isSameDay(date, d)
+            );
             return {
               ...prev,
               selectedDates: isAlreadySelected
-                ? prev.selectedDates.filter(d => !isSameDay(date, d))
+                ? prev.selectedDates.filter((d) => !isSameDay(date, d))
                 : [...prev.selectedDates, date],
             };
-          case 'range':
+          case "range":
             if (!prev.selectedRange.start || prev.selectedRange.end) {
               // Start new range
               return {
@@ -209,10 +225,11 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
 
   const selectRange = useCallback(
     (start: Date, end?: Date) => {
-      if (config.mode !== 'range') return;
-      if (checkIsDateDisabled(start) || (end && checkIsDateDisabled(end))) return;
+      if (config.mode !== "range") return;
+      if (checkIsDateDisabled(start) || (end && checkIsDateDisabled(end)))
+        return;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         selectedRange: end ? normalizeRange(start, end) : { start, end: null },
       }));
@@ -222,9 +239,9 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
 
   const addDate = useCallback(
     (date: Date) => {
-      if (config.mode !== 'multiple' || checkIsDateDisabled(date)) return;
+      if (config.mode !== "multiple" || checkIsDateDisabled(date)) return;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         selectedDates: [...prev.selectedDates, date],
       }));
@@ -234,18 +251,18 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
 
   const removeDate = useCallback(
     (date: Date) => {
-      if (config.mode !== 'multiple') return;
+      if (config.mode !== "multiple") return;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        selectedDates: prev.selectedDates.filter(d => !isSameDay(date, d)),
+        selectedDates: prev.selectedDates.filter((d) => !isSameDay(date, d)),
       }));
     },
     [config.mode]
   );
 
   const clearSelection = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedDate: null,
       selectedDates: [],
@@ -254,11 +271,11 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   }, []);
 
   const setHoveredDate = useCallback((date: Date | null) => {
-    setState(prev => ({ ...prev, hoveredDate: date }));
+    setState((prev) => ({ ...prev, hoveredDate: date }));
   }, []);
 
   const goToNextMonth = useCallback(() => {
-    setState(prev => {
+    setState((prev) => {
       const { next } = getMonthBoundaries(prev.currentYear, prev.currentMonth);
       return {
         ...prev,
@@ -269,8 +286,11 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   }, []);
 
   const goToPreviousMonth = useCallback(() => {
-    setState(prev => {
-      const { previous } = getMonthBoundaries(prev.currentYear, prev.currentMonth);
+    setState((prev) => {
+      const { previous } = getMonthBoundaries(
+        prev.currentYear,
+        prev.currentMonth
+      );
       return {
         ...prev,
         currentYear: previous.year,
@@ -281,31 +301,33 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
 
   const goToToday = useCallback(() => {
     const now = new Date();
-    setState(prev => {
+    setState((prev) => {
       switch (config.mode) {
-        case 'single':
+        case "single":
           return {
             ...prev,
             currentYear: now.getFullYear(),
             currentMonth: now.getMonth(),
             selectedDate: now, // Always set to current date/time
           };
-        case 'range':
+        case "range":
           return {
             ...prev,
             currentYear: now.getFullYear(),
             currentMonth: now.getMonth(),
             selectedRange: { start: now, end: null }, // Start range with today
           };
-        case 'multiple':
+        case "multiple":
           // For multiple mode, add today to selection if not already selected
-          const isAlreadySelected = prev.selectedDates.some(d => isSameDay(d, now));
+          const isAlreadySelected = prev.selectedDates.some((d) =>
+            isSameDay(d, now)
+          );
           return {
             ...prev,
             currentYear: now.getFullYear(),
             currentMonth: now.getMonth(),
-            selectedDates: isAlreadySelected 
-              ? prev.selectedDates 
+            selectedDates: isAlreadySelected
+              ? prev.selectedDates
               : [...prev.selectedDates, now],
           };
         default:
@@ -319,7 +341,7 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   }, [config.mode]);
 
   const goToMonth = useCallback((year: number, month: number) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       currentYear: year,
       currentMonth: month,
@@ -327,19 +349,16 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   }, []);
 
   const setIsOpen = useCallback((isOpen: boolean) => {
-    setState(prev => ({ ...prev, isOpen }));
+    setState((prev) => ({ ...prev, isOpen }));
   }, []);
 
   const toggle = useCallback(() => {
-    setState(prev => ({ ...prev, isOpen: !prev.isOpen }));
+    setState((prev) => ({ ...prev, isOpen: !prev.isOpen }));
   }, []);
 
-  const formatDateWrapper = useCallback(
-    (date: Date, format?: string) => {
-      return formatDate(date, format);
-    },
-    []
-  );
+  const formatDateWrapper = useCallback((date: Date, format?: string) => {
+    return formatDate(date, format);
+  }, []);
 
   const parseDateWrapper = useCallback(
     (dateString: string, format?: string) => {
@@ -352,11 +371,16 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
     (hours: number, minutes: number, seconds: number = 0) => {
       if (!config.time?.enableTime) return;
 
-      setState(prev => {
-        if (config.mode === 'single' && prev.selectedDate) {
+      setState((prev) => {
+        if (config.mode === "single" && prev.selectedDate) {
           return {
             ...prev,
-            selectedDate: combineDateAndTime(prev.selectedDate, hours, minutes, seconds),
+            selectedDate: combineDateAndTime(
+              prev.selectedDate,
+              hours,
+              minutes,
+              seconds
+            ),
           };
         }
         return prev;
@@ -369,13 +393,13 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
     (date: Date, hours: number, minutes: number, seconds: number = 0) => {
       if (checkIsDateDisabled(date)) return;
 
-      const finalDate = config.time?.enableTime 
+      const finalDate = config.time?.enableTime
         ? combineDateAndTime(date, hours, minutes, seconds)
         : date;
 
-      setState(prev => {
+      setState((prev) => {
         switch (config.mode) {
-          case 'single':
+          case "single":
             return {
               ...prev,
               selectedDate: finalDate,
@@ -393,17 +417,17 @@ export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DateP
   return {
     // State
     ...state,
-    
+
     // Calendar data
     calendar,
-    
+
     // Helper functions
     isDateDisabled: checkIsDateDisabled,
     isDateSelected: checkIsDateSelected,
     isDateInRange: checkIsDateInRange,
     formatDate: formatDateWrapper,
     parseDate: parseDateWrapper,
-    
+
     // Actions
     selectDate,
     selectRange,
