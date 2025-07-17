@@ -23,16 +23,31 @@ export default [
       },
     ],
     plugins: [
-      resolve(),
+      resolve({
+        preferBuiltins: false,
+      }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
     ],
-    external: ['react', 'react-dom', 'date-fns'],
+    external: (id) => {
+      return ['react', 'react-dom', 'react/jsx-runtime'].includes(id) || 
+             id.startsWith('react/') || 
+             id.startsWith('react-dom/') ||
+             ['date-fns'].includes(id) ||
+             id.startsWith('date-fns/');
+    },
   },
   {
     input: 'src/index.ts',
     output: [{ file: 'dist/index.d.ts', format: 'esm' }],
     plugins: [dts({ tsconfig: './tsconfig.json' })],
-    external: [/\.css$/, 'react', 'react-dom', 'date-fns'],
+    external: (id) => {
+      return /\.css$/.test(id) ||
+             ['react', 'react-dom', 'react/jsx-runtime'].includes(id) || 
+             id.startsWith('react/') || 
+             id.startsWith('react-dom/') ||
+             ['date-fns'].includes(id) ||
+             id.startsWith('date-fns/');
+    },
   },
 ];

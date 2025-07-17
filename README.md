@@ -442,6 +442,108 @@ The package includes comprehensive tests. Run them with:
 npm test
 ```
 
+## Troubleshooting
+
+### "Cannot read properties of undefined (reading 'ReactCurrentDispatcher')" Error
+
+This error typically occurs when there are multiple versions of React in your project or when React hooks are called outside a React component. Here are the solutions:
+
+#### 1. **Check for Multiple React Versions**
+```bash
+npm ls react
+```
+If you see multiple versions, ensure only one version of React is installed:
+
+```bash
+npm dedupe
+# or
+npm install --legacy-peer-deps
+```
+
+#### 2. **Webpack Resolution (for Create React App or custom Webpack)**
+Add this to your webpack config:
+```javascript
+module.exports = {
+  resolve: {
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    },
+  },
+};
+```
+
+#### 3. **Vite Resolution**
+Add this to your `vite.config.js`:
+```javascript
+export default defineConfig({
+  resolve: {
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    },
+  },
+});
+```
+
+#### 4. **Next.js Resolution**
+Add this to your `next.config.js`:
+```javascript
+module.exports = {
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    };
+    return config;
+  },
+};
+```
+
+#### 5. **Package Manager Issues**
+Try deleting `node_modules` and reinstalling:
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### 6. **Ensure Proper Usage**
+Make sure you're calling `useDatePicker` inside a React component:
+```tsx
+// ✅ Correct - inside React component
+function MyComponent() {
+  const datePicker = useDatePicker();
+  return <div>...</div>;
+}
+
+// ❌ Incorrect - outside React component
+const datePicker = useDatePicker(); // This will cause the error
+```
+
+### Other Common Issues
+
+#### TypeScript Errors
+If you encounter TypeScript errors, make sure you have the latest version of `@types/react`:
+```bash
+npm install --save-dev @types/react@latest @types/react-dom@latest
+```
+
+#### Server-Side Rendering (SSR) Issues
+For Next.js or other SSR frameworks, make sure to check if you're in a browser environment:
+```tsx
+const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+if (!mounted) return null;
+
+// Now safe to use datePicker
+const datePicker = useDatePicker();
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

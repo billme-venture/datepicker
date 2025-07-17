@@ -32,6 +32,14 @@ const defaultConfig: Partial<DatePickerConfig> = {
 };
 
 export function useDatePicker(userConfig: Partial<DatePickerConfig> = {}): DatePickerReturn {
+  // Check if React is available and we're in a React component context
+  if (typeof useState !== 'function') {
+    throw new Error(
+      '@billme-venture/headless-datepicker: React hooks are not available. ' +
+      'Make sure you are calling useDatePicker inside a React component and that React is properly installed.'
+    );
+  }
+
   const config = { ...defaultConfig, ...userConfig } as DatePickerConfig;
   
   // Initialize state based on mode and provided values
